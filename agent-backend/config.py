@@ -18,6 +18,9 @@ AGENT_RESOURCE_ID = os.getenv(
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", "kangnam-backend")
 VERTEX_AI_LOCATION = os.getenv("VERTEX_AI_LOCATION", "us-east4")
 
+# Database 설정
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 # 환경 확인
 def check_config():
     """환경 변수 확인"""
