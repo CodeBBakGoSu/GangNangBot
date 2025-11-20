@@ -11,5 +11,12 @@ google-adk==1.16.0
 # 환경 변수
 python-dotenv==1.1.1
 
-# CORS 지원 (FastAPI에 포함되어 있지만 명시)
+# OAuth & JWT
+Authlib>=1.5.1
+httpx>=0.28.1
+PyJWT==2.9.0
+itsdangerous==2.1.2
 
+# Database
+sqlalchemy==2.0.28
+psycopg[binary,pool]==3.2.1
