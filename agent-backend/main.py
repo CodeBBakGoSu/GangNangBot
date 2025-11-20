@@ -16,6 +16,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
+from starlette.middleware.sessions import SessionMiddleware
+
 # CORS 설정 (프론트엔드 연동용)
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +26,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 세션 미들웨어 (OAuth State 관리용)
+app.add_middleware(SessionMiddleware, secret_key=config.JWT_SECRET_KEY or "secret-key")
 
 # 라우터 등록
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
