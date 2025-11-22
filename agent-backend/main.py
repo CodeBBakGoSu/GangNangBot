@@ -4,6 +4,11 @@ Agent Backend API
 FastAPI 백엔드 - Agent Engine과 연동
 """
 
+# [중요 1] 이 설정이 다른 모듈 임포트보다 가장 먼저 실행되어야 합니다.
+# Windows 환경에서 ProactorEventLoop 오류를 방지하기 위해 SelectorEventLoop로 강제 설정합니다.
+# if sys.platform.startswith("win"):
+#     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
@@ -13,6 +18,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from routers.sessions import router as sessions_router
 from routers.chat import router as chat_router
 from routers.auth import router as auth_router
+from routers.profiles import router as profiles_router
 from routers import database
 
 import config
@@ -47,6 +53,7 @@ app.add_middleware(SessionMiddleware, secret_key=config.JWT_SECRET_KEY or "secre
 app.include_router(sessions_router)
 app.include_router(chat_router)
 app.include_router(auth_router)
+app.include_router(profiles_router)
 app.include_router(database.router, prefix="/db", tags=["database"])
 
 # 헬스체크 (Cloud Run 필수)
@@ -68,11 +75,14 @@ async def root():
             "list_sessions": "GET /sessions",
             "send_message": "POST /chat/message",
             "get_messages": "GET /sessions/{session_id}/messages",
-            "delete_session": "DELETE /sessions/{session_id}"
+            "delete_session": "DELETE /sessions/{session_id}",
+            "save_profile": "POST /profiles"
         }
     }
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
-
+    # Uvicorn이 실행되면서 위에서 설정한 SelectorEventLoop를 무시하고 
+    # 다시 Proactor로 돌아가는 것을 방지합니다.
+    # uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True, loop="asyncio")
